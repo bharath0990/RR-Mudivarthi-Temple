@@ -122,4 +122,15 @@ export const createSheetsHeaders = async (): Promise<boolean> => {
 
     await sheets.spreadsheets.values.update({
       spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
-      range: 'Sheet1!
+      range: 'Sheet1!A1',
+      valueInputOption: 'RAW',
+      requestBody: { values: headers },
+    });
+
+    console.log('✅ Headers created in Google Sheets successfully!');
+    return true;
+  } catch (error) {
+    console.error('❌ Error creating headers in Google Sheets:', error);
+    return false;
+  }
+};
