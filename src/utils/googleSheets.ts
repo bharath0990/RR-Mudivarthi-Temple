@@ -1,8 +1,5 @@
-// ticketSheets.ts
-import { google } from 'googleapis';
-import dotenv from 'dotenv';
-
-dotenv.config();
+// Frontend-only Google Sheets utilities
+// Note: Actual Google Sheets integration requires a backend server for security
 
 export interface TicketData {
   bookingNumber: string;
@@ -19,75 +16,64 @@ export interface TicketData {
   ticketImageUrl?: string;
 }
 
-// Google Sheets API - Real configuration from environment variables
-const GOOGLE_SHEETS_CONFIG = {
-  SPREADSHEET_ID: process.env.SPREADSHEET_ID!,
-  RANGE: 'Sheet1!A:L',
-  CLIENT_EMAIL: process.env.CLIENT_EMAIL!,
-  PRIVATE_KEY: process.env.PRIVATE_KEY!.replace(/\\n/g, '\n'),
-};
-
 // Function to upload ticket image to cloud storage
-// Note: This is a placeholder implementation since Google Cloud Storage APIs
-// require server-side implementation for security reasons
+// This would call a backend API endpoint in production
 export const uploadTicketImage = async (imageBlob: Blob, ticketId: string): Promise<string> => {
   try {
-    // In a production environment, this would upload to Google Cloud Storage
-    // via a secure backend API endpoint
-    console.log('📸 Uploading ticket image for:', ticketId);
+    console.log('📸 Preparing ticket image for upload:', ticketId);
+    
+    // In production, this would make an API call to your backend:
+    // const formData = new FormData();
+    // formData.append('image', imageBlob);
+    // formData.append('ticketId', ticketId);
+    // 
+    // const response = await fetch('/api/upload-ticket-image', {
+    //   method: 'POST',
+    //   body: formData
+    // });
+    // 
+    // const result = await response.json();
+    // return result.imageUrl;
     
     // For now, return a placeholder URL
-    // In production, this would be the actual cloud storage URL
     const placeholderUrl = `https://storage.googleapis.com/temple-tickets/${ticketId}.png`;
     
-    console.log('✅ Ticket image uploaded successfully:', placeholderUrl);
+    console.log('✅ Ticket image prepared for upload:', placeholderUrl);
     return placeholderUrl;
   } catch (error) {
-    console.error('❌ Error uploading ticket image:', error);
-    // Return empty string on error so the process can continue
+    console.error('❌ Error preparing ticket image:', error);
     return '';
   }
 };
 
 // Function to save ticket data to Google Sheets
+// This would call a backend API endpoint in production
 export const saveTicketToGoogleSheets = async (ticketData: TicketData): Promise<boolean> => {
   try {
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: GOOGLE_SHEETS_CONFIG.CLIENT_EMAIL,
-        private_key: GOOGLE_SHEETS_CONFIG.PRIVATE_KEY,
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const sheets = google.sheets({ version: 'v4', auth });
-
-    const values = [[
-      ticketData.bookingNumber,
-      ticketData.customerName,
-      ticketData.phone,
-      ticketData.email,
-      ticketData.serviceType,
-      ticketData.serviceName,
-      ticketData.date,
-      ticketData.count,
-      ticketData.amount,
-      ticketData.status,
-      ticketData.timestamp,
-      ticketData.ticketImageUrl || ''
-    ]];
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
-      range: GOOGLE_SHEETS_CONFIG.RANGE,
-      valueInputOption: 'RAW',
-      requestBody: { values },
-    });
-
-    console.log('✅ Ticket saved to Google Sheets successfully!');
+    console.log('📊 Preparing ticket data for Google Sheets:', ticketData.bookingNumber);
+    
+    // In production, this would make an API call to your backend:
+    // const response = await fetch('/api/save-ticket', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(ticketData)
+    // });
+    // 
+    // if (!response.ok) {
+    //   throw new Error('Failed to save ticket data');
+    // }
+    // 
+    // const result = await response.json();
+    // return result.success;
+    
+    // Simulate successful save for now
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('✅ Ticket data prepared for Google Sheets successfully!');
     return true;
   } catch (error) {
-    console.error('❌ Error saving to Google Sheets:', error);
+    console.error('❌ Error preparing ticket data:', error);
     return false;
   }
 };
@@ -114,45 +100,24 @@ export const prepareTicketData = (booking: any): TicketData => {
   };
 };
 
-// Function to create Google Sheets headers (run once to set up the sheet)
-export const createSheetsHeaders = async (): Promise<boolean> => {
-  try {
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: GOOGLE_SHEETS_CONFIG.CLIENT_EMAIL,
-        private_key: GOOGLE_SHEETS_CONFIG.PRIVATE_KEY,
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const sheets = google.sheets({ version: 'v4', auth });
-
-    const headers = [[
-      'Booking Number',
-      'Customer Name',
-      'Phone',
-      'Email',
-      'Service Type',
-      'Service Name',
-      'Date',
-      'Count',
-      'Amount (₹)',
-      'Status',
-      'Timestamp',
-      'Ticket Image URL'
-    ]];
-
-    await sheets.spreadsheets.values.update({
-      spreadsheetId: GOOGLE_SHEETS_CONFIG.SPREADSHEET_ID,
-      range: 'Sheet1!A1',
-      valueInputOption: 'RAW',
-      requestBody: { values: headers },
-    });
-
-    console.log('✅ Headers created in Google Sheets successfully!');
-    return true;
-  } catch (error) {
-    console.error('❌ Error creating headers in Google Sheets:', error);
-    return false;
-  }
-};
+// Backend Integration Guide:
+// 
+// To implement actual Google Sheets integration, you'll need to:
+// 
+// 1. Create a backend server (Node.js, Python, etc.)
+// 2. Install googleapis and other server-side dependencies there
+// 3. Store your Google service account credentials securely on the backend
+// 4. Create API endpoints like:
+//    - POST /api/save-ticket (saves ticket data to Google Sheets)
+//    - POST /api/upload-ticket-image (uploads image to Google Cloud Storage)
+// 5. Update the functions above to make HTTP requests to these endpoints
+// 
+// Example backend API endpoint structure:
+// 
+// POST /api/save-ticket
+// Body: TicketData object
+// Response: { success: boolean, message?: string }
+// 
+// POST /api/upload-ticket-image  
+// Body: FormData with image file and ticketId
+// Response: { success: boolean, imageUrl?: string }
