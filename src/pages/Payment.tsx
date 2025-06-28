@@ -62,7 +62,7 @@ const Payment = () => {
 
   const handleRazorpayPayment = () => {
     const options = {
-      key: 'YOUR_RAZORPAY_KEY_ID', // Replace this
+      key: 'rzp_test_tCfEmjd1qFqUtr', // Replace this
       amount: (booking.totalAmount || booking.amount || 0) * 100,
       currency: 'INR',
       name: isDonation ? 'Temple Donation' : 'Service Booking',
