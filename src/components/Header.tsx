@@ -6,7 +6,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path || location.hash === `#${path}`;
 
   return (
     <header className="bg-gradient-to-r from-red-800 via-red-700 to-orange-600 shadow-lg sticky top-0 z-50">
