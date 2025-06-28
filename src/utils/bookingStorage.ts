@@ -103,7 +103,7 @@ export const getTodaysBookings = (): BookingRecord[] => {
   return getBookingsByDateRange(today, today);
 };
 
-// Get bookings by service type
+// Get bookings by service type - THIS WAS MISSING THE EXPORT
 export const getBookingsByServiceType = (serviceType: 'darshan' | 'vehicle'): BookingRecord[] => {
   const bookings = getAllBookings();
   return bookings.filter(booking => booking.serviceType === serviceType);
