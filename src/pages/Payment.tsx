@@ -1,8 +1,8 @@
-import { ArrowLeft, Calendar, Car, CheckCircle, Heart, Smartphone } from 'lucide-react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ArrowLeft, Calendar, Car, CheckCircle, Heart, Smartphone } from 'lucide-react';
 
-type BookingType = {
+interface BookingType {
   type: string;
   vehicleType?: { name: string; description: string };
   darshanType?: { name: string; description: string };
@@ -16,15 +16,24 @@ type BookingType = {
   totalAmount?: number;
   amount?: number;
   email?: string;
-  name?: string;
-  phone?: string;
-};
+  userDetails?: {
+    name: string;
+    phone: string;
+    email: string;
+  };
+}
 
-type RazorpayResponse = {
+interface RazorpayResponse {
   razorpay_payment_id: string;
   razorpay_order_id: string;
   razorpay_signature: string;
-};
+}
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 const Payment = () => {
   const location = useLocation();
@@ -61,8 +70,13 @@ const Payment = () => {
   }
 
   const handleRazorpayPayment = () => {
+    if (!window.Razorpay) {
+      alert('Razorpay is not loaded. Please refresh the page and try again.');
+      return;
+    }
+
     const options = {
-      key: 'rzp_test_tCfEmjd1qFqUtr', // Replace this
+      key: 'rzp_test_tCfEmjd1qFqUtr', // Replace with your actual key
       amount: (booking.totalAmount || booking.amount || 0) * 100,
       currency: 'INR',
       name: isDonation ? 'Temple Donation' : 'Service Booking',
@@ -79,9 +93,9 @@ const Payment = () => {
         navigate('/confirmation', { state: { booking: paymentData } });
       },
       prefill: {
-        name: booking.donorName || booking.name || 'User',
-        email: booking.email || 'user@example.com',
-        contact: booking.donorPhone || booking.phone || '9999999999',
+        name: booking.donorName || booking.userDetails?.name || 'User',
+        email: booking.userDetails?.email || 'user@example.com',
+        contact: booking.donorPhone || booking.userDetails?.phone || '9999999999',
       },
       notes: {
         address: 'Temple Services, India',
@@ -91,7 +105,7 @@ const Payment = () => {
       },
     };
 
-    const rzp = new (window as any).Razorpay(options);
+    const rzp = new window.Razorpay(options);
     rzp.open();
   };
 
@@ -114,7 +128,7 @@ const Payment = () => {
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Pay via Razorpay</h2>
           <div
-            className="flex items-center justify-between border-2 border-orange-500 bg-orange-50 rounded-xl p-6 cursor-pointer"
+            className="flex items-center justify-between border-2 border-orange-500 bg-orange-50 rounded-xl p-6 cursor-pointer hover:bg-orange-100 transition-colors"
             onClick={handleRazorpayPayment}
           >
             <div className="flex items-center space-x-4">
@@ -134,7 +148,7 @@ const Payment = () => {
           <h3 className="text-2xl font-bold text-gray-800 mb-6">
             {isDonation ? 'Donation' : 'Order'} Summary
           </h3>
-          <div className="space-y-2 mb-6">
+          <div className="space-y-4 mb-6">
             <div className="flex items-center mb-2">
               {isDonation ? (
                 <Heart className="h-5 w-5 text-orange-600 mr-2" />
@@ -146,13 +160,13 @@ const Payment = () => {
               <span className="font-semibold">{serviceData.name}</span>
             </div>
             <p className="text-gray-600 text-sm">{serviceData.description}</p>
+            {!isDonation && booking.date && (
+              <p className="text-sm">Date: {new Date(booking.date).toLocaleDateString()}</p>
+            )}
             {!isDonation && (
-              <>
-                <p className="text-sm">Date: {new Date(booking.date!).toLocaleDateString()}</p>
-                <p className="text-sm">
-                  {isVehicleBooking ? 'Vehicles' : 'Tickets'}: {count}
-                </p>
-              </>
+              <p className="text-sm">
+                {isVehicleBooking ? 'Vehicles' : 'Tickets'}: {count}
+              </p>
             )}
             {isDonation && (
               <>
@@ -164,7 +178,7 @@ const Payment = () => {
               ID: <span className="font-mono">{booking.donationId || booking.bookingNumber}</span>
             </p>
             <p className="text-xl font-bold mt-4">
-              Total: ₹{(booking.totalAmount || booking.amount).toLocaleString()}
+              Total: ₹{(booking.totalAmount || booking.amount || 0).toLocaleString()}
             </p>
           </div>
         </div>

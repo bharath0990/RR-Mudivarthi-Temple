@@ -3,9 +3,20 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/RR-Mudivarthi-Temple/', // 👈 important for GitHub Pages
+  base: '/RR-Mudivarthi-Temple/',
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  define: {
+    global: 'globalThis',
+  },
+  resolve: {
+    alias: {
+      process: "process/browser",
+      stream: "stream-browserify",
+      zlib: "browserify-zlib",
+      util: 'util'
+    }
+  }
 });

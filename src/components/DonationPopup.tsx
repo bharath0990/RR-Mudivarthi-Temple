@@ -30,7 +30,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       setShowSparkles(true);
-      // Play gentle chime sound
       playDonationChime();
     } else {
       setShowSparkles(false);
@@ -59,14 +58,14 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
         oscillator.stop(startTime + duration);
       };
 
-      // Gentle temple bell sound
       const now = audioContext.currentTime;
-      playNote(523.25, now, 0.3); // C5
-      playNote(659.25, now + 0.15, 0.3); // E5
-      playNote(783.99, now + 0.3, 0.4); // G5
+      playNote(523.25, now, 0.3);
+      playNote(659.25, now + 0.15, 0.3);
+      playNote(783.99, now + 0.3, 0.4);
       
     } catch (error) {
       // Silently fail if audio is not supported
+      console.log('Audio not supported');
     }
   };
 
@@ -94,7 +93,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
 
     setLoading(true);
 
-    // Simulate donation processing
     setTimeout(() => {
       const donationData = {
         donationId: `DON${Date.now()}`,
@@ -107,7 +105,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
         type: 'donation'
       };
 
-      // Navigate to payment with donation data
       navigate('/payment', { state: { booking: donationData } });
       setLoading(false);
       onClose();
@@ -118,10 +115,8 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onClick={onClose}></div>
       
-      {/* Sparkles Animation */}
       {showSparkles && (
         <div className="absolute inset-0 pointer-events-none">
           {Array.from({ length: 20 }).map((_, i) => (
@@ -141,10 +136,8 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
         </div>
       )}
 
-      {/* Popup Container */}
       <div className="relative flex items-center justify-center min-h-screen p-4">
         <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-          {/* Header */}
           <div className="relative bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white p-8 rounded-t-3xl">
             <button
               onClick={onClose}
@@ -169,13 +162,11 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Content */}
           <div className="p-8 space-y-8">
-            {/* Donation Amounts */}
             <div>
               <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">Choose Your Donation Amount</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {donationAmounts.map((donation, index) => (
+                {donationAmounts.map((donation) => (
                   <div
                     key={donation.amount}
                     className={`cursor-pointer border-2 rounded-xl p-4 text-center transition-all duration-300 hover-lift hover-glow ${
@@ -199,7 +190,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
                 ))}
               </div>
 
-              {/* Custom Amount */}
               <div className="mt-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Or enter custom amount:
@@ -221,7 +211,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* Donor Details */}
             <div className="space-y-4">
               <h3 className="text-lg font-bold text-gray-800">Your Details</h3>
               
@@ -269,7 +258,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* Payment Method */}
             <div>
               <h3 className="text-lg font-bold text-gray-800 mb-4">Payment Method</h3>
               <div className="grid grid-cols-2 gap-4">
@@ -309,7 +297,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
               </div>
             </div>
 
-            {/* Donation Benefits */}
             <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-6">
               <div className="flex items-center space-x-3 mb-4">
                 <Gift className="h-6 w-6 text-orange-600" />
@@ -335,7 +322,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
               </ul>
             </div>
 
-            {/* Action Buttons */}
             <div className="flex space-x-4">
               <button
                 onClick={onClose}
@@ -360,7 +346,6 @@ const DonationPopup: React.FC<DonationPopupProps> = ({ isOpen, onClose }) => {
               </button>
             </div>
 
-            {/* Trust Message */}
             <div className="text-center text-sm text-gray-500">
               <p>🔒 Your donation is secure and will be used for temple maintenance and community service</p>
             </div>
