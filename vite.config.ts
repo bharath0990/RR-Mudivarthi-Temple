@@ -3,7 +3,6 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/RR-Mudivarthi-Temple/',
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],

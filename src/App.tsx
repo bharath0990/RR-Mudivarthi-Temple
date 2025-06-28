@@ -14,7 +14,7 @@ import Donation from './pages/Donation';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/RR-Mudivarthi-Temple">
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
         <Header />
         <main>
